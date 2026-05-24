@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 - Teams</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <form method="GET" action="/teams"
+            <i class="ph ph-magnifying-glass search-icon"></i>
+
+            <input 
+                class="search-bar" 
+                type="text" 
+                name="search" 
+                placeholder=" Zoek op naam..." 
+                value="<%= search %>"
+            >
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th><a href="/teams?search=<%= search %>&sortField=name&sortDirection=<%= sortField === 'name' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        NAAM <%= sortField === 'name' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th><a href="/teams?search=<%= search %>&sortField=foundedYear&sortDirection=<%= sortField === 'foundedYear' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        OPGERICHT <%= sortField === 'foundedYear' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th><a href="/teams?search=<%= search %>&sortField=baseLocation&sortDirection=<%= sortField === 'baseLocation' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        LOCATIE <%= sortField === 'baseLocation' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th><a href="/teams?search=<%= search %>&sortField=isFactoryTeam&sortDirection=<%= sortField === 'isFactoryTeam' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        FABRIEKSTEAM <%= sortField === 'isFactoryTeam' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let team of teams) { %>
+                <tr class="clickable-row" onclick="window.location='/teams/<%= team.id %>'" title="Klik voor details van <%= team.name %>">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img class="driver-img" src="<%= team.logoUrl %>" alt="<%= team.name %>">
+                            <div class="driver-name"><%= team.name %></div>
+                        </div>
+                    </td>
+                    <td><%= team.foundedYear %></td>
+                    <td><%= team.baseLocation %></td>
+                    <td>
+                        <% if(team.isFactoryTeam) { %>
+                            <span class="dot-active"></span> Ja
+                        <% } else { %>
+                            <span class="dot-inactive"></span> Nee
+                        <% } %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

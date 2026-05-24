@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 - Coureurs</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <form method="GET" action="/drivers">
+         <i class="ph ph-magnifying-glass search-icon"></i>
+
+            <input 
+                class="search-bar" 
+                type="text" 
+                name="search" 
+                placeholder=" Zoek op naam..." 
+                value="<%= search %>"
+            >
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th><a href="/drivers?search=<%= search %>&sortField=name&sortDirection=<%= sortField === 'name' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        NAAM <%= sortField === 'name' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th><a href="/drivers?search=<%= search %>&sortField=birthDate&sortDirection=<%= sortField === 'birthDate' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        GEBOORTEDATUM <%= sortField === 'birthDate' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th>FAVORIETE CIRCUITS</th>
+                    <th><a href="/drivers?search=<%= search %>&sortField=driverStatus&sortDirection=<%= sortField === 'driverStatus' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        STATUS <%= sortField === 'driverStatus' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th><a href="/drivers?search=<%= search %>&sortField=isActive&sortDirection=<%= sortField === 'isActive' && sortDirection === 'asc' ? 'desc' : 'asc' %>">
+                        ACTIEF <%= sortField === 'isActive' ? (sortDirection === 'asc' ? '▲' : '▼') : '' %>
+                    </a></th>
+                    <th>ACTIES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let driver of drivers) { %>
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img class="driver-img" src="<%= driver.profileImageUrl %>" alt="<%= driver.name %>">
+                            <div class="tooltip-wrapper">
+                                <div class="driver-name"><%= driver.name %></div>
+                                <div class="driver-team"><%= driver.currentTeam.name %></div>
+                                <div class="tooltip-box"><%= driver.biography %></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><%= driver.birthDate %></td>
+                    <td>
+                        <% for(let track of driver.favoriteTracks) { %>
+                            <span class="badge"><%= track %></span><br>
+                        <% } %>
+                    </td>
+                    <td><span class="badge"><%= driver.driverStatus %></span></td>
+                    <td>
+                        <% if(driver.isActive) { %>
+                            <span class="dot-active"></span>
+                        <% } else { %>
+                            <span class="dot-inactive"></span>
+                        <% } %>
+                    </td>
+                    <td><a class="view-link" href="/drivers/<%= driver.id %>">View</a></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

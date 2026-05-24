@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 - <%= team.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <div class="detail-card">
+            <img src="<%= team.logoUrl %>" alt="<%= team.name %>">
+            <h2><%= team.name %></h2>
+            <p><strong>Opgericht:</strong> <%= team.foundedYear %></p>
+            <p><strong>Locatie:</strong> <%= team.baseLocation %></p>
+            <p><strong>Fabrieksteam:</strong> 
+                <% if(team.isFactoryTeam) { %>
+                    <span class="dot-active"></span> Ja
+                <% } else { %>
+                    <span class="dot-inactive"></span> Nee
+                <% } %>
+            </p>
+            <br>
+            <h3>Coureurs</h3>
+            <br>
+           <% for(let driver of teamDrivers) { %>
+    <div class="team-driver-row">
+        <img src="<%= driver.profileImageUrl %>" alt="<%= driver.name %>">
+        <div class="team-driver-info">
+            <div class="driver-name"><%= driver.name %></div>
+            <div class="driver-team"><%= driver.driverStatus %></div>
+        </div>
+        <a class="view-link" href="/drivers/<%= driver.id %>">View</a>
+    </div>
+<% } %>
+        </div>
+    </main>
+</body>
+</html>
