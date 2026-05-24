@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 - <%= driver.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <div class="detail-card">
+            <img src="<%= driver.profileImageUrl %>" alt="<%= driver.name %>">
+            <h2><%= driver.name %></h2>
+            <p><%= driver.biography %></p>
+            <br>
+            <p><strong>Autonummer:</strong> <%= driver.carNumber %></p>
+            <p><strong>Geboortedatum:</strong> <%= driver.birthDate %></p>
+            <p><strong>Status:</strong> <span class="badge"><%= driver.driverStatus %></span></p>
+            <p><strong>Actief:</strong> 
+                <% if(driver.isActive) { %>
+                    <span class="dot-active"></span> Ja
+                <% } else { %>
+                    <span class="dot-inactive"></span> Nee
+                <% } %>
+            </p>
+            <p><strong>Favoriete circuits:</strong></p>
+            <% for(let track of driver.favoriteTracks) { %>
+                <span class="badge"><%= track %></span>
+            <% } %>
+            <br><br>
+            <p><strong>Team:</strong> 
+                <a class="view-link" href="/teams/<%= driver.currentTeam.id %>">
+                    <%= driver.currentTeam.name %>
+                </a>
+            </p>
+            
+        <% if (typeof user !== 'undefined' && user && user.role === 'ADMIN') { %>
+    <br>
+    <a href="/drivers/<%= driver.id %>/edit" style="display:inline-block; padding: 10px 20px; background:#1a1a2e; color:white; border-radius:8px; text-decoration:none; font-size:14px;">
+         Bewerken
+    </a>
+<% } %>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <form method="GET" action="/">
+        <i class="ph ph-magnifying-glass search-icon"></i>
+
+            <input 
+                class="search-bar" 
+                type="text" 
+                name="search" 
+                placeholder=" Zoek op naam..." 
+                value="<%= search %>"
+            >
+        </form>
+
+        <h3 style="margin-bottom:10px;"><i class="ph ph-steering-wheel"></i> Coureurs</h3>
+        <table style="margin-bottom:30px;">
+            <thead>
+                <tr>
+                    <th>NAAM</th>
+                    <th>GEBOORTEDATUM</th>
+                    <th>FAVORIETE CIRCUITS</th>
+                    <th>STATUS</th>
+                    <th>ACTIEF</th>
+                    <th>ACTIES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let driver of randomDrivers) { %>
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img class="driver-img" src="<%= driver.profileImageUrl %>" alt="<%= driver.name %>">
+                            <div class="tooltip-wrapper">
+                                <div class="driver-name"><%= driver.name %></div>
+                                <div class="driver-team"><%= driver.currentTeam.name %></div>
+                                <div class="tooltip-box"><%= driver.biography %></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><%= driver.birthDate %></td>
+                    <td>
+                        <% for(let track of driver.favoriteTracks) { %>
+                            <span class="badge"><%= track %></span><br>
+                        <% } %>
+                    </td>
+                    <td><span class="badge"><%= driver.driverStatus %></span></td>
+                    <td>
+                        <% if(driver.isActive) { %>
+                            <span class="dot-active"></span>
+                        <% } else { %>
+                            <span class="dot-inactive"></span>
+                        <% } %>
+                    </td>
+                    <td><a class="view-link" href="/drivers/<%= driver.id %>">View</a></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <h3 style="margin-bottom:10px;"><i class="ph ph-users"></i> Teams</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>NAAM</th>
+                    <th>OPGERICHT</th>
+                    <th>LOCATIE</th>
+                    <th>FABRIEKSTEAM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let team of randomTeams) { %>
+                <tr class="clickable-row" onclick="window.location='/teams/<%= team.id %>'" title="Klik voor details van <%= team.name %>">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img class="driver-img" src="<%= team.logoUrl %>" alt="<%= team.name %>">
+                            <div class="driver-name"><%= team.name %></div>
+                        </div>
+                    </td>
+                    <td><%= team.foundedYear %></td>
+                    <td><%= team.baseLocation %></td>
+                    <td>
+                        <% if(team.isFactoryTeam) { %>
+                            <span class="dot-active"></span> Ja
+                        <% } else { %>
+                            <span class="dot-inactive"></span> Nee
+                        <% } %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

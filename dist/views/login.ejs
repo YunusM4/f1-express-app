@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 App - Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>F1 App</h1>
+        <h2>Inloggen</h2>
+
+        <% if (message) { %>
+            <p class="message <%= message.type %>"><%= message.message %></p>
+        <% } %>
+
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Vul je username in" required>
+            </div>
+            <div class="form-group">
+                <label>Wachtwoord</label>
+                <input type="password" name="password" placeholder="Vul je wachtwoord in" required>
+            </div>
+            <button type="submit">Inloggen</button>
+        </form>
+        <p style="margin-top:16px; font-size:14px;">
+            Nog geen account? <a href="/register">Registreer hier</a>
+        </p>
+    </div>
+</body>
+</html>
