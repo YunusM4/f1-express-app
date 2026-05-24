@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
-"scripts": {
+  "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon index.ts"
-},
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -21,7 +21,6 @@
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -31,6 +30,7 @@
     "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "mongodb": "^7.2.0"
+    "mongodb": "^7.2.0",
+    "ts-node": "^10.9.2"
   }
 }
