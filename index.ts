@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import path from "path";
 import { Driver, Team } from "./interfaces";
+import { connect, driversCollection, teamsCollection } from "./database";
 
 dotenv.config();
 
@@ -14,45 +15,42 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("port", process.env.PORT || 3000);
 
-let drivers: Driver[] = [];
-let teams: Team[] = [];
-
-app.get("/", (req, res) => {
+// HOME
+app.get("/", async (req, res) => {
     const search = req.query.search?.toString() ?? "";
 
-    const randomDrivers = [...drivers]
-        .filter(d => d.name.toLowerCase().includes(search.toLowerCase()))
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5);
+    const randomDrivers = await driversCollection.aggregate<Driver>([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        { $sample: { size: 5 } }
+    ]).toArray();
 
-    const randomTeams = [...teams]
-        .filter(t => t.name.toLowerCase().includes(search.toLowerCase()))
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 2);
+    const randomTeams = await teamsCollection.aggregate<Team>([
+        { $match: { name: { $regex: search, $options: "i" } } },
+        { $sample: { size: 2 } }
+    ]).toArray();
 
     res.render("index", { randomDrivers, randomTeams, search });
 });
 
-app.get("/drivers", (req, res) => {
+// DRIVERS
+app.get("/drivers", async (req, res) => {
     const search = req.query.search?.toString() ?? "";
     const sortField = req.query.sortField?.toString() ?? "name";
     const sortDirection = req.query.sortDirection?.toString() ?? "asc";
 
-    let filtered = drivers.filter(d =>
-        d.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const sortOrder = sortDirection === "asc" ? 1 : -1;
 
-    filtered.sort((a: any, b: any) => {
-        if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
-        if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-    });
+    const drivers = await driversCollection
+        .find({ name: { $regex: search, $options: "i" } })
+        .sort({ [sortField]: sortOrder })
+        .toArray();
 
-    res.render("drivers", { drivers: filtered, search, sortField, sortDirection });
+    res.render("drivers", { drivers, search, sortField, sortDirection });
 });
 
-app.get("/drivers/:id", (req, res) => {
-    const driver = drivers.find(d => d.id === req.params.id);
+// DRIVER DETAIL
+app.get("/drivers/:id", async (req, res) => {
+    const driver = await driversCollection.findOne({ id: req.params.id });
     if (!driver) {
         res.status(404).send("Coureur niet gevonden");
         return;
@@ -60,39 +58,60 @@ app.get("/drivers/:id", (req, res) => {
     res.render("driver-detail", { driver });
 });
 
-app.get("/teams", (req, res) => {
+// TEAMS
+app.get("/teams", async (req, res) => {
     const search = req.query.search?.toString() ?? "";
     const sortField = req.query.sortField?.toString() ?? "name";
     const sortDirection = req.query.sortDirection?.toString() ?? "asc";
 
-    let filtered = teams.filter(t =>
-        t.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const sortOrder = sortDirection === "asc" ? 1 : -1;
 
-    filtered.sort((a: any, b: any) => {
-        if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
-        if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-    });
+    const teams = await teamsCollection
+        .find({ name: { $regex: search, $options: "i" } })
+        .sort({ [sortField]: sortOrder })
+        .toArray();
 
-    res.render("teams", { teams: filtered, search, sortField, sortDirection });
+    res.render("teams", { teams, search, sortField, sortDirection });
 });
-app.get("/teams/:id", (req, res) => {
-    const team = teams.find(t => t.id === req.params.id);
+
+// TEAM DETAIL
+app.get("/teams/:id", async (req, res) => {
+    const team = await teamsCollection.findOne({ id: req.params.id });
     if (!team) {
         res.status(404).send("Team niet gevonden");
         return;
     }
-    const teamDrivers = drivers.filter(d => d.currentTeam.id === req.params.id);
+    const teamDrivers = await driversCollection.find({ "currentTeam.id": req.params.id }).toArray();
     res.render("team-detail", { team, teamDrivers });
 });
 
+// EDIT DRIVER - formulier tonen
+app.get("/drivers/:id/edit", async (req, res) => {
+    const driver = await driversCollection.findOne({ id: req.params.id });
+    if (!driver) {
+        res.status(404).send("Coureur niet gevonden");
+        return;
+    }
+    res.render("driver-edit", { driver });
+});
+
+// EDIT DRIVER - formulier verwerken
+app.post("/drivers/:id/edit", async (req, res) => {
+    await driversCollection.updateOne(
+        { id: req.params.id },
+        { $set: {
+            name: req.body.name,
+            carNumber: parseInt(req.body.carNumber),
+            driverStatus: req.body.driverStatus,
+            isActive: req.body.isActive === "true",
+            biography: req.body.biography
+        }}
+    );
+    res.redirect(`/drivers/${req.params.id}`);
+});
+
 app.listen(app.get("port"), async () => {
-    const driversRes = await fetch("https://raw.githubusercontent.com/YunusM4/ProjectWeb-jsonHosten/main/data/drivers.json");
-    drivers = await driversRes.json() as Driver[];
-
-    const teamsRes = await fetch("https://raw.githubusercontent.com/YunusM4/ProjectWeb-jsonHosten/main/data/teams.json");
-    teams = await teamsRes.json() as Team[];
-
+    await connect();
     console.log("Server started on http://localhost:" + app.get("port"));
 });
+

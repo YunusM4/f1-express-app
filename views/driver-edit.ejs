@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 - Bewerk <%= driver.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <%- include("partials/navbar") %>
+    <main class="content">
+        <div class="detail-card">
+            <h2>Bewerk <%= driver.name %></h2>
+            <br>
+            <form method="POST" action="/drivers/<%= driver.id %>/edit">
+                
+                <div class="form-group">
+                    <label>Naam</label>
+                    <input type="text" name="name" value="<%= driver.name %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Autonummer</label>
+                    <input type="number" name="carNumber" value="<%= driver.carNumber %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="driverStatus">
+                        <option value="World Champion" <%= driver.driverStatus === 'World Champion' ? 'selected' : '' %>>World Champion</option>
+                        <option value="Race Winner" <%= driver.driverStatus === 'Race Winner' ? 'selected' : '' %>>Race Winner</option>
+                        <option value="Podium Finisher" <%= driver.driverStatus === 'Podium Finisher' ? 'selected' : '' %>>Podium Finisher</option>
+                        <option value="Rookie" <%= driver.driverStatus === 'Rookie' ? 'selected' : '' %>>Rookie</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Actief</label>
+                    <select name="isActive">
+                        <option value="true" <%= driver.isActive ? 'selected' : '' %>>Ja</option>
+                        <option value="false" <%= !driver.isActive ? 'selected' : '' %>>Nee</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Biografie</label>
+                    <textarea name="biography" rows="4"><%= driver.biography %></textarea>
+                </div>
+
+                <button type="submit"> Opslaan</button>
+                <a href="/drivers/<%= driver.id %>" style="margin-left:10px ;">Annuleren</a>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
