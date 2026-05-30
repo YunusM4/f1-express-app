@@ -130,7 +130,9 @@ app.get("/drivers/:id/edit", secureMiddleware, async (req, res) => {
 app.post("/drivers/:id/edit", secureMiddleware, async (req, res) => {
     if (req.session.user?.role !== "ADMIN") {
         return res.redirect("/drivers/" + req.params.id);
+        
     }
+    console.log("/driver/"+req.params.id);
     await driversCollection.updateOne(
         { id: req.params.id },
         { $set: {
@@ -142,6 +144,7 @@ app.post("/drivers/:id/edit", secureMiddleware, async (req, res) => {
         }}
     );
     res.redirect(`/drivers/${req.params.id}`);
+
 });
 
 //  TEAMS 
