@@ -1,0 +1,29 @@
+services:
+  f1-app:
+    build: .
+    restart: unless-stopped
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - USER_USERNAME=${USER_USERNAME}
+      - USER_PASSWORD=${USER_PASSWORD}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - PORT=3000
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_certs:/config
+
+volumes:
+  caddy_data:
+  caddy_certs:

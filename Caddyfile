@@ -1,0 +1,3 @@
+f1-yunus.duckdns.org {
+    reverse_proxy f1-app:3000
+}
